@@ -29,11 +29,20 @@
   </extensions>
 
   <actions>
+    <group id="Codeparser.DesignPattersMenu" text="Design patterns" description="Design patterns">
+      <add-to-group group-id="MainMenu" anchor="last"  />
+      <action id="Codeparser.OpenDialog" class="nl.windesheim.codeparser.OpenDialog" text="Found design patterns" description="A menu options that shows a dialog including the found design patterns." />
+    </group>
+
+    <!--<group id="nl.windesheim.codeparser.OpenDialog" text="Design patterns" description="Shows the design patterns menu">-->
+      <!--<add-to-group group-id="MainMenu" anchor="last" />-->
+      <!--<action id="nl.windesheim.codeparser.OpenDialog" class="nl.windesheim.codeparser.OpenDialog" text="List design patterns" description="Description 1"></action>-->
+    <!--</group>-->
     <!-- Add your actions here -->
-    <action id="codeparser.openDialog" class="nl.windesheim.codeparser.OpenDialog" text="Open_Dialog"
-            description="Opens a dialog that is able to show all the found design patterns.">
-      <add-to-group group-id="MainMenu" anchor="first"/>
-    </action>
+    <!--<action id="codeparser.openDialog" class="nl.windesheim.codeparser.OpenDialog" text="Open_Dialog"-->
+            <!--description="Opens a dialog that is able to show all the found design patterns.">-->
+      <!--<add-to-group group-id="MainMenu" anchor="last"/>-->
+    <!--</action>-->
   </actions>
 
 </idea-plugin>
