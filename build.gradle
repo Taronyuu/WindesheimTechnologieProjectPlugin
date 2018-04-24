@@ -4,6 +4,7 @@ plugins {
 
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
+apply plugin: 'checkstyle'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -11,6 +12,10 @@ targetCompatibility = JavaVersion.VERSION_1_8
 intellij {
     version '143.2370.31'
     pluginName 'Codeparser IntelliJ'
+}
+
+checkstyle {
+    toolVersion "7.6.1"
 }
 
 group 'nl.windesheim.codeparser.plugin'
