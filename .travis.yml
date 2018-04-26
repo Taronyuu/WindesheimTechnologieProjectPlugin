@@ -2,4 +2,4 @@ language: java
 
 script:
    - gradle buildPlugin
-   - gradle checkstyleMain
+   - gradle check
