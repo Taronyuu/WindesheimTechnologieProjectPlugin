@@ -25,7 +25,9 @@ public class MainDialog implements ToolWindowFactory {
     private JLabel lastUpdateText;
 
     public MainDialog() {
-        this.refreshButton.addActionListener(new MainDialogActionListener(this.lastUpdateText));
+        this.refreshButton.addActionListener(
+                new MainDialogActionListener(this.lastUpdateText, this.patternsList)
+        );
     }
 
     @Override

@@ -1,5 +1,10 @@
 package nl.windesheim.codeparser.plugin.ActionListeners;
 
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
+import nl.windesheim.codeparser.plugin.Services.CodeParser;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,9 +17,20 @@ public class MainDialogActionListener implements ActionListener {
     private JLabel lastUpdateText;
     private String lastUpdateDefaultText = "Last updated: ";
 
-    public MainDialogActionListener(JLabel lastUpdateText) {
+    private Project project;
+    private CodeParser codeParser;
+    private JTree patternsList;
+
+    public MainDialogActionListener(JLabel lastUpdateText, JTree patternsList) {
+        // I'm not sure which project we should get, but for now lets take the first project.
+        this.project = ProjectManager.getInstance().getOpenProjects()[0];
+
+        this.codeParser = new CodeParser(this.project, patternsList);
+
+        this.patternsList = patternsList;
         this.lastUpdateText = lastUpdateText;
         this.updateLastUpdatedLabel();
+        this.updateFoundPatterns();
     }
 
     @Override
@@ -27,6 +43,10 @@ public class MainDialogActionListener implements ActionListener {
      */
     protected void updateLastUpdatedLabel() {
         this.lastUpdateText.setText(this.lastUpdateDefaultText + this.getFormattedTimestamp());
+    }
+
+    protected void updateFoundPatterns() {
+        this.codeParser.findPatternForCurrentFile();
     }
 
     /**
