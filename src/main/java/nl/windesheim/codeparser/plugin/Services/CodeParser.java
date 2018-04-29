@@ -22,14 +22,12 @@ import java.util.ArrayList;
 public class CodeParser {
 
     private Project project;
-    private JTree patternTree;
 
-    public CodeParser(Project project, JTree patternTree) {
+    public CodeParser(Project project) {
         this.project = project;
-        this.patternTree = patternTree;
     }
 
-    public void findPatternForCurrentFile() {
+    public CodeReport findPatternForCurrentFile() {
         // Get current openend file
         String path = getCurrentFile();
 
@@ -38,8 +36,7 @@ public class CodeParser {
 
         ArrayList<IDesignPattern> patterns = analyzeFiles(file, analysis);
 
-        CodeReport codeReport = generateCodeReport(patterns);
-        System.out.println(codeReport.getReport());
+        return generateCodeReport(patterns);
     }
 
     private CodeReport generateCodeReport(ArrayList<IDesignPattern> patterns) {
@@ -70,7 +67,7 @@ public class CodeParser {
 
     @NotNull
     private String getCurrentFile() {
-        Document currentDoc = FileEditorManager.getInstance(project).getSelectedTextEditor().getDocMaument();
+        Document currentDoc = FileEditorManager.getInstance(project).getSelectedTextEditor().getDocument();
         VirtualFile currentFile = FileDocumentManager.getInstance().getFile(currentDoc);
         return currentFile.getPath();
     }

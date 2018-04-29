@@ -19,12 +19,13 @@ public class MainDialog implements ToolWindowFactory {
     private JButton refreshButton;
 
     // Tree list that should show all the found design patterns.
-    private JTree patternsList;
+    private JTextArea patternsList;
 
     // Message to provide the user with a last updated at timestamp
     private JLabel lastUpdateText;
 
     public MainDialog() {
+        this.patternsList.setEditable(false);
         this.refreshButton.addActionListener(
                 new MainDialogActionListener(this.lastUpdateText, this.patternsList)
         );

@@ -4,6 +4,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import nl.windesheim.codeparser.plugin.Services.CodeParser;
+import nl.windesheim.reporting.components.CodeReport;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -19,13 +20,13 @@ public class MainDialogActionListener implements ActionListener {
 
     private Project project;
     private CodeParser codeParser;
-    private JTree patternsList;
+    private JTextArea patternsList;
 
-    public MainDialogActionListener(JLabel lastUpdateText, JTree patternsList) {
+    public MainDialogActionListener(JLabel lastUpdateText, JTextArea patternsList) {
         // I'm not sure which project we should get, but for now lets take the first project.
         this.project = ProjectManager.getInstance().getOpenProjects()[0];
 
-        this.codeParser = new CodeParser(this.project, patternsList);
+        this.codeParser = new CodeParser(this.project);
 
         this.patternsList = patternsList;
         this.lastUpdateText = lastUpdateText;
@@ -36,6 +37,7 @@ public class MainDialogActionListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         this.updateLastUpdatedLabel();
+        this.updateFoundPatterns();
     }
 
     /**
@@ -46,7 +48,8 @@ public class MainDialogActionListener implements ActionListener {
     }
 
     protected void updateFoundPatterns() {
-        this.codeParser.findPatternForCurrentFile();
+        CodeReport codeReport = this.codeParser.findPatternForCurrentFile();
+        this.patternsList.setText(codeReport.getReport());
     }
 
     /**
