@@ -1,6 +1,5 @@
 package nl.windesheim.codeparser.plugin.Services;
 
-import com.intellij.notification.Notification;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -13,20 +12,34 @@ import nl.windesheim.reporting.builders.CodeReportBuilder;
 import nl.windesheim.reporting.components.CodeReport;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+/**
+ * The CodeParser class will handle all the boring actions
+ * needed to get a Report object from the actual CodeParser.
+ */
 public class CodeParser {
 
+    /**
+     * Current Project object, used to get the current open file.
+     */
     private Project project;
 
-    public CodeParser(Project project) {
+    /**
+     * Wrapper for the CodeParser package.
+     * @param project the current project
+     */
+    public CodeParser(final Project project) {
         this.project = project;
     }
 
+    /**
+     * Get the pattern for the currently openend file.
+     * @return CodeReport
+     */
     public CodeReport findPatternForCurrentFile() {
         // Get current openend file
         String path = getCurrentFile();
@@ -39,7 +52,12 @@ public class CodeParser {
         return generateCodeReport(patterns);
     }
 
-    private CodeReport generateCodeReport(ArrayList<IDesignPattern> patterns) {
+    /**
+     * Generate the code report for the given patterns.
+     * @param patterns List of the paterns.
+     * @return CodeReport
+     */
+    private CodeReport generateCodeReport(final ArrayList<IDesignPattern> patterns) {
         CodeReportBuilder codeReportBuilder = Report.create();
         for (IDesignPattern p : patterns) {
             try {
@@ -52,7 +70,13 @@ public class CodeParser {
         return codeReportBuilder.buildReport();
     }
 
-    private ArrayList<IDesignPattern> analyzeFiles(File file, FileAnalysisProvider analysis) {
+    /**
+     * Analyze the current file.
+     * @param file current file.
+     * @param analysis The analysis provider to be used.
+     * @return ArrayList<IDesignPattern>
+     */
+    private ArrayList<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
         ArrayList<IDesignPattern> patterns = new ArrayList<>();
 
         try {
@@ -65,6 +89,10 @@ public class CodeParser {
         return patterns;
     }
 
+    /**
+     * Get the current file path from the project.
+     * @return String
+     */
     @NotNull
     private String getCurrentFile() {
         Document currentDoc = FileEditorManager.getInstance(project).getSelectedTextEditor().getDocument();
