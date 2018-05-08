@@ -8,28 +8,57 @@ import com.intellij.ui.content.ContentFactory;
 import nl.windesheim.codeparser.plugin.ActionListeners.MainDialogActionListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JLabel;
 
+/**
+ * The MianDialog from where all the action happens.
+ */
 public class MainDialog implements ToolWindowFactory {
+    /**
+     * The toolwindow for this project.
+     */
     private ToolWindow toolWindow;
 
+    /**
+     * The wrapper panel for all the other elements.
+     */
     private JPanel toolPanel;
 
-    // Button to refresh all the found design patterns.
+    /**
+     * Button to refresh all the found design patterns.
+     */
     private JButton refreshButton;
 
-    // Tree list that should show all the found design patterns.
-    private JTree patternsList;
+    /**
+     * Tree list that should show all the found design patterns.
+     */
+    private JTextArea patternsList;
 
-    // Message to provide the user with a last updated at timestamp
+    /**
+     * Message to provide the user with a last updated at timestamp.
+     */
     private JLabel lastUpdateText;
 
+    /**
+     * Constructor for this class, used to add an action listener.
+     */
     public MainDialog() {
-        this.refreshButton.addActionListener(new MainDialogActionListener(this.lastUpdateText));
+        this.patternsList.setEditable(false);
+        this.refreshButton.addActionListener(
+                new MainDialogActionListener(this.lastUpdateText, this.patternsList)
+        );
     }
 
+    /**
+     * Implemented by the interface.
+     * @param project current project.
+     * @param toolWindow given toolwindow.
+     */
     @Override
-    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+    public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
         this.toolWindow = toolWindow;
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(this.toolPanel, "", false);

@@ -23,8 +23,10 @@ version '1.0'
 
 repositories {
     mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    compile 'com.github.Taronyuu:WindesheimTechnologieProject:develop-SNAPSHOT'
 }
