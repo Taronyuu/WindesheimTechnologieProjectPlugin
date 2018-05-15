@@ -5,6 +5,7 @@ plugins {
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 apply plugin: 'checkstyle'
+apply plugin: 'pmd'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -16,6 +17,13 @@ intellij {
 
 checkstyle {
     toolVersion "7.6.1"
+}
+
+pmd {
+    ignoreFailures = true
+    sourceSets = [sourceSets.main]
+    reportsDir = file("$project.buildDir/reports/pmd")
+    ruleSetConfig = resources.text.fromFile("pmd-ruleset.xml")
 }
 
 group 'nl.windesheim.codeparser.plugin'
