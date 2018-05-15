@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The CodeParser class will handle all the boring actions
@@ -47,7 +48,7 @@ public class CodeParser {
         File file = new File(path);
         FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-        ArrayList<IDesignPattern> patterns = analyzeFiles(file, analysis);
+        List<IDesignPattern> patterns = analyzeFiles(file, analysis);
 
         return generateCodeReport(patterns);
     }
@@ -57,7 +58,7 @@ public class CodeParser {
      * @param patterns List of the paterns.
      * @return CodeReport
      */
-    private CodeReport generateCodeReport(final ArrayList<IDesignPattern> patterns) {
+    private CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
         CodeReportBuilder codeReportBuilder = Report.create();
         for (IDesignPattern p : patterns) {
             try {
@@ -76,8 +77,8 @@ public class CodeParser {
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
-    private ArrayList<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
-        ArrayList<IDesignPattern> patterns = new ArrayList<>();
+    private List<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
+        List<IDesignPattern> patterns = new ArrayList<>();
 
         try {
             patterns = analysis.analyzeFile(file.toURI().toURL());
@@ -86,6 +87,7 @@ public class CodeParser {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
         return patterns;
     }
 
