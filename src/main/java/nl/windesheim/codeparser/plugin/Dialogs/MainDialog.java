@@ -17,10 +17,6 @@ import javax.swing.JLabel;
  * The MianDialog from where all the action happens.
  */
 public class MainDialog implements ToolWindowFactory {
-    /**
-     * The toolwindow for this project.
-     */
-    private ToolWindow toolWindow;
 
     /**
      * The wrapper panel for all the other elements.
@@ -59,7 +55,6 @@ public class MainDialog implements ToolWindowFactory {
      */
     @Override
     public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-        this.toolWindow = toolWindow;
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(this.toolPanel, "", false);
         toolWindow.getContentManager().addContent(content);
