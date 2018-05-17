@@ -2,5 +2,5 @@ language: java
 
 script:
    - gradle buildPlugin
-   - gradle check
-   - gradle pmdTest
+#   - gradle check
+   - gradle pmdMain
