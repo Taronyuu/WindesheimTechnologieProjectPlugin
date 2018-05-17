@@ -1,4 +1,4 @@
-package nl.windesheim.codeparser.plugin.Services;
+package nl.windesheim.codeparser.plugin.services;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;

@@ -1,4 +1,4 @@
 /**
  * Code parser plugin project.
  */
-package nl.windesheim.codeparser.plugin.Dialogs;
+package nl.windesheim.codeparser.plugin.dialogs;

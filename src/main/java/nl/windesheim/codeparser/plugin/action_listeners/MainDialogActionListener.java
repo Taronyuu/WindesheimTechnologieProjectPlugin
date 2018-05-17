@@ -1,8 +1,8 @@
-package nl.windesheim.codeparser.plugin.ActionListeners;
+package nl.windesheim.codeparser.plugin.action_listeners;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import nl.windesheim.codeparser.plugin.Services.CodeParser;
+import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 
 import javax.swing.JLabel;

@@ -1,4 +1,4 @@
 /**
  * Code parser plugin project.
  */
-package nl.windesheim.codeparser.plugin.Services;
+package nl.windesheim.codeparser.plugin.services;
