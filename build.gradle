@@ -20,10 +20,14 @@ checkstyle {
 }
 
 pmd {
-    ignoreFailures = true
+//    ignoreFailures = true
     sourceSets = [sourceSets.main]
-    reportsDir = file("$project.buildDir/reports/pmd")
-    ruleSetConfig = resources.text.fromFile("pmd-ruleset.xml")
+//    reportsDir = file("$project.buildDir/reports/pmd")
+//    ruleSetConfig = resources.text.fromFile("pmd-ruleset.xml")
+    ruleSets = []
+    ruleSetFiles = rootProject.files("pmd-ruleset.xml")
+    toolVersion = "6.2.0"
+    consoleOutput  = true
 }
 
 group 'nl.windesheim.codeparser.plugin'
