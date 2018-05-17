@@ -31,6 +31,9 @@ public class CodeParser {
      */
     private final Project project;
 
+    /**
+     * The logger object for the current class.
+     */
     private final Logger logger;
 
     /**
