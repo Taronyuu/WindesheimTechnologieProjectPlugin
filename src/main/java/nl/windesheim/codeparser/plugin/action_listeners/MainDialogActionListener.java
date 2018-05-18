@@ -1,8 +1,7 @@
-package nl.windesheim.codeparser.plugin.ActionListeners;
+package nl.windesheim.codeparser.plugin.action_listeners;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
-import nl.windesheim.codeparser.plugin.Services.CodeParser;
+import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 
 import javax.swing.JLabel;
@@ -20,27 +19,22 @@ public class MainDialogActionListener implements ActionListener {
     /**
      * Message to provide the user with a last updated at timestamp.
      */
-    private JLabel lastUpdateText;
+    private final JLabel lastUpdateLabel;
 
     /**
      * Default last update label text.
      */
-    private String lastUpdateDefaultText = "Last updated: ";
-
-    /**
-     * Current project.
-     */
-    private Project project;
+    private static final String LAST_UPDATE_TEXT = "Last updated: ";
 
     /**
      * A CodeParser wrapper object.
      */
-    private CodeParser codeParser;
+    private final CodeParser codeParser;
 
     /**
      * A text area to show the current patterns.
      */
-    private JTextArea patternsList;
+    private final JTextArea patternsList;
 
     /**
      * Get the required Swing object.
@@ -49,22 +43,20 @@ public class MainDialogActionListener implements ActionListener {
      */
     public MainDialogActionListener(final JLabel lastUpdateText, final JTextArea patternsList) {
         // I'm not sure which project we should get, but for now lets take the first project.
-        this.project = ProjectManager.getInstance().getOpenProjects()[0];
-
-        this.codeParser = new CodeParser(this.project);
+        this.codeParser = new CodeParser(ProjectManager.getInstance().getOpenProjects()[0]);
 
         this.patternsList = patternsList;
-        this.lastUpdateText = lastUpdateText;
+        this.lastUpdateLabel = lastUpdateText;
         this.updateLastUpdatedLabel();
         this.updateFoundPatterns();
     }
 
     /**
      * A click happens, refresh the label and found patterns.
-     * @param e action event given by the button.
+     * @param event action event given by the button.
      */
     @Override
-    public void actionPerformed(final ActionEvent e) {
+    public void actionPerformed(final ActionEvent event) {
         this.updateLastUpdatedLabel();
         this.updateFoundPatterns();
     }
@@ -73,7 +65,7 @@ public class MainDialogActionListener implements ActionListener {
      * Update the last updated label text.
      */
     protected void updateLastUpdatedLabel() {
-        this.lastUpdateText.setText(this.lastUpdateDefaultText + this.getFormattedTimestamp());
+        this.lastUpdateLabel.setText(this.LAST_UPDATE_TEXT + this.getFormattedTimestamp());
     }
 
     /**

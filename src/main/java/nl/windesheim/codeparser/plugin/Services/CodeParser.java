@@ -1,4 +1,4 @@
-package nl.windesheim.codeparser.plugin.Services;
+package nl.windesheim.codeparser.plugin.services;
 
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The CodeParser class will handle all the boring actions
@@ -26,7 +29,12 @@ public class CodeParser {
     /**
      * Current Project object, used to get the current open file.
      */
-    private Project project;
+    private final Project project;
+
+    /**
+     * The logger object for the current class.
+     */
+    private final Logger logger;
 
     /**
      * Wrapper for the CodeParser package.
@@ -34,6 +42,7 @@ public class CodeParser {
      */
     public CodeParser(final Project project) {
         this.project = project;
+        this.logger = Logger.getLogger(this.getClass().getName());
     }
 
     /**
@@ -47,7 +56,7 @@ public class CodeParser {
         File file = new File(path);
         FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-        ArrayList<IDesignPattern> patterns = analyzeFiles(file, analysis);
+        List<IDesignPattern> patterns = analyzeFiles(file, analysis);
 
         return generateCodeReport(patterns);
     }
@@ -57,14 +66,10 @@ public class CodeParser {
      * @param patterns List of the paterns.
      * @return CodeReport
      */
-    private CodeReport generateCodeReport(final ArrayList<IDesignPattern> patterns) {
+    private CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
         CodeReportBuilder codeReportBuilder = Report.create();
         for (IDesignPattern p : patterns) {
-            try {
-                codeReportBuilder.addFoundPatternBuilder(Report.getMapper().getBuilder(p));
-            } catch (NullPointerException ex) {
-                System.out.println("Something went wrong: " + ex.getMessage());
-            }
+            codeReportBuilder.addFoundPatternBuilder(Report.getMapper().getBuilder(p));
         }
 
         return codeReportBuilder.buildReport();
@@ -76,16 +81,17 @@ public class CodeParser {
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
-    private ArrayList<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
-        ArrayList<IDesignPattern> patterns = new ArrayList<>();
+    private List<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
+        List<IDesignPattern> patterns = new ArrayList<>();
 
         try {
             patterns = analysis.analyzeFile(file.toURI().toURL());
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Ops!", e);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Ops!", e);
         }
+
         return patterns;
     }
 
