@@ -96,7 +96,7 @@ public class MainDialogActionListener implements ActionListener {
         this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
         if(root != null){
             this.fillTreeWithPatterns(codeReport.getTreePresentation().getRoot(), defaultRootNode);
-            logger.info("New root node has amount of chidren: " + defaultRootNode.getChildCount());
+            logger.info("New root node has amount of children: " + defaultRootNode.getChildCount());
             this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
         }
     }
@@ -115,6 +115,7 @@ public class MainDialogActionListener implements ActionListener {
 
             // Temporarily store this node for the siblings
             TreeNode siblings = node;
+
             // Only continue if there is another sibling
             if(siblings.hasNextSibling()){
                 // Keep on looping as long as there is another sibling.
@@ -128,8 +129,10 @@ public class MainDialogActionListener implements ActionListener {
                 }
             }
 
-            // Always add the current category (a found design pattern) under the root node.
-            root.add(category);
+            // Ignore empty categories
+            if(category.getChildCount() > 0){
+                root.add(category);
+            }
 
             // If the following child is null, we should break
             // Otherwise continue with the loop and use the next first child.
