@@ -1,18 +1,18 @@
 package nl.windesheim.codeparser.plugin.action_listeners;
 
 import com.intellij.openapi.project.ProjectManager;
-import com.intellij.ui.treeStructure.Tree;
 import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 import nl.windesheim.reporting.components.TreeNode;
-import nl.windesheim.reporting.components.TreePresentation;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Logger;
 
 /**
  * Action listener for the main dialog refresh button.
@@ -39,7 +39,9 @@ public class MainDialogActionListener implements ActionListener {
      */
     private JTree patternsList;
 
-    private DefaultMutableTreeNode defaultMutableTreeNode;
+    private DefaultTreeModel patternsListModel;
+
+    private final Logger logger;
 
     /**
      * Get the required Swing object.
@@ -47,12 +49,16 @@ public class MainDialogActionListener implements ActionListener {
      * @param patternsList Text area to update when refreshing.
      */
     public MainDialogActionListener(final JLabel lastUpdateText, final JTree patternsList) {
-        this.defaultMutableTreeNode = new DefaultMutableTreeNode("Found Design Patterns");
+        this.logger = Logger.getLogger(this.getClass().getName());
 
         // I'm not sure which project we should get, but for now lets take the first project.
         this.codeParser = new CodeParser(ProjectManager.getInstance().getOpenProjects()[0]);
 
         this.patternsList = patternsList;
+        this.patternsListModel = (DefaultTreeModel)this.patternsList.getModel();
+        this.patternsList.clearSelection();
+        this.patternsList.removeAll();
+
         this.lastUpdateLabel = lastUpdateText;
         this.updateLastUpdatedLabel();
         this.updateFoundPatterns();
@@ -80,15 +86,18 @@ public class MainDialogActionListener implements ActionListener {
      * the patterns from the CodeParser wrapper.
      */
     protected void updateFoundPatterns() {
-        CodeReport codeReport = this.codeParser.findPatternForCurrentFile();
+        CodeReport codeReport = this.codeParser.findPatternsForCurrentProject();
 
         TreeNode root = codeReport.getTreePresentation().getRoot();
+        this.logger.info("Root node: " + root);
         this.patternsList.clearSelection();
         this.patternsList.removeAll();
+        DefaultMutableTreeNode defaultRootNode = new DefaultMutableTreeNode("Found Design Patterns");
+        this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
         if(root != null){
-            this.defaultMutableTreeNode.removeAllChildren();
-            this.fillTreeWithPatterns(codeReport.getTreePresentation().getRoot());
-            this.patternsList = new Tree(this.defaultMutableTreeNode);
+            this.fillTreeWithPatterns(codeReport.getTreePresentation().getRoot(), defaultRootNode);
+            logger.info("New root node has amount of chidren: " + defaultRootNode.getChildCount());
+            this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
         }
     }
 
@@ -96,19 +105,39 @@ public class MainDialogActionListener implements ActionListener {
      * Put the logic to fill the JTree here.
      * @param codeReport generated codereport
      */
-    protected void fillTreeWithPatterns(TreeNode node) {
-        while(node.hasNextSibling()){
+    protected void fillTreeWithPatterns(TreeNode node, DefaultMutableTreeNode root) {
+        // Always keep on looping unless we break the cycle somewhere
+        while(true){
+            logger.info("Found one the children: " + node);
+
+            // Create a new category, this should be the name of the pattern. (e.g. Singleton or Observer)
             DefaultMutableTreeNode category = new DefaultMutableTreeNode(node.toString());
 
-            TreeNode children = node;
-            if(children.hasChildren()){
-                while(children.hasChildren()){
-                    children = children.getFirstChild();
-                    category.add(new DefaultMutableTreeNode(children.toString()));
+            // Temporarily store this node for the siblings
+            TreeNode siblings = node;
+            // Only continue if there is another sibling
+            if(siblings.hasNextSibling()){
+                // Keep on looping as long as there is another sibling.
+                while(siblings.hasNextSibling()){
+                    // Get the first next sibling and store it in  the variable
+                    siblings = siblings.getNextSibling();
+                    logger.info("Found one of the siblings: " + siblings);
+
+                    // Add this node as a category under the design pattern. This should be a file name.
+                    category.add(new DefaultMutableTreeNode(siblings.toString()));
                 }
             }
 
-            this.defaultMutableTreeNode.add(category);
+            // Always add the current category (a found design pattern) under the root node.
+            root.add(category);
+
+            // If the following child is null, we should break
+            // Otherwise continue with the loop and use the next first child.
+            if(node.getFirstChild() == null){
+                break;
+            }else {
+                node = node.getFirstChild();
+            }
         }
     }
 
