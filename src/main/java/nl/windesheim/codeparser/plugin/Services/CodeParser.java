@@ -51,14 +51,19 @@ public class CodeParser {
      */
     public CodeReport findPatternForCurrentFile() {
         // Get current openend file
-        String path = getCurrentFile();
+        try {
+            String path = getCurrentFile();
+            File file = new File(path);
+            FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-        File file = new File(path);
-        FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
+            List<IDesignPattern> patterns = analyzeFiles(file, analysis);
 
-        List<IDesignPattern> patterns = analyzeFiles(file, analysis);
-
-        return generateCodeReport(patterns);
+            return generateCodeReport(patterns);
+        }catch (NullPointerException ex){
+            return new CodeReport();
+        }catch (IllegalStateException ex){
+            return new CodeReport();
+        }
     }
 
     /**
