@@ -136,7 +136,7 @@ public class MainDialogActionListener implements ActionListener {
                     // Add this node as a category under the design pattern. This should be a file name.
                     category.add(new DefaultMutableTreeNode(siblings.toString()));
 
-                    if(siblings.hasChildren()){
+                    if (siblings.hasChildren()) {
                         this.fillTreeWithPatterns(siblings, category);
                     }
                 }
