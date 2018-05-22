@@ -135,6 +135,10 @@ public class MainDialogActionListener implements ActionListener {
 
                     // Add this node as a category under the design pattern. This should be a file name.
                     category.add(new DefaultMutableTreeNode(siblings.toString()));
+
+                    if(siblings.hasChildren()){
+                        this.fillTreeWithPatterns(siblings, category);
+                    }
                 }
             }
 
@@ -150,6 +154,15 @@ public class MainDialogActionListener implements ActionListener {
             } else {
                 node = node.getFirstChild();
             }
+        }
+    }
+
+    protected DefaultMutableTreeNode fill(DefaultMutableTreeNode treeNode, TreeNode node) {
+        if (node.hasNextSibling()){
+            return this.fill(new DefaultMutableTreeNode(node), node.getNextSibling());
+        }else {
+            treeNode.add(new DefaultMutableTreeNode(node));
+            return treeNode;
         }
     }
 
