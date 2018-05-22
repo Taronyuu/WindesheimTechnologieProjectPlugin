@@ -54,9 +54,7 @@ public class CodeParser {
         // Get current openend file
         try {
             String stringPath = getCurrentDirectory() + "/";
-            if(logger.isLoggable(Level.INFO)) {
-                logger.info("Using path: " + stringPath);
-            }
+            logger.info("Using path: " + stringPath);
             Path path = Paths.get(stringPath);
 
             FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
