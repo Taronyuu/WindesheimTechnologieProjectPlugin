@@ -1,8 +1,5 @@
 package nl.windesheim.codeparser.plugin.services;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ModuleRootManager;
@@ -14,7 +11,6 @@ import nl.windesheim.reporting.builders.CodeReportBuilder;
 import nl.windesheim.reporting.components.CodeReport;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -58,7 +54,9 @@ public class CodeParser {
         // Get current openend file
         try {
             String stringPath = getCurrentDirectory() + "/";
-            logger.info("Using path: " + stringPath);
+            if(logger.isLoggable(Level.INFO)) {
+                logger.info("Using path: " + stringPath);
+            }
             Path path = Paths.get(stringPath);
 
             FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
@@ -67,10 +65,9 @@ public class CodeParser {
 
             CodeReport codeReport = generateCodeReport(patterns);
             logger.info("REPORTS: " + codeReport.getReport());
+
             return codeReport;
-        }catch (NullPointerException ex){
-            return new CodeReport();
-        }catch (IllegalStateException ex){
+        } catch (IllegalStateException ex) {
             return new CodeReport();
         }
     }
@@ -91,7 +88,7 @@ public class CodeParser {
 
     /**
      * Analyze the current file.
-     * @param file current file.
+     * @param path current path.
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
@@ -117,7 +114,8 @@ public class CodeParser {
      */
     @NotNull
     private String getCurrentDirectory() {
-        VirtualFile file = ModuleRootManager.getInstance(ModuleManager.getInstance(project).getModules()[0]).getContentRoots()[0];
+        VirtualFile file = ModuleRootManager.getInstance(ModuleManager.getInstance(project)
+                .getModules()[0]).getContentRoots()[0];
         return file.getPath();
     }
 }

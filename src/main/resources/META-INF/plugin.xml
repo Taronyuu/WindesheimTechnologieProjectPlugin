@@ -21,7 +21,7 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="Design Patterns" icon="/icon.jpg" anchor="right" factoryClass="nl.windesheim.codeparser.plugin.Dialogs.MainDialog"/>
+        <toolWindow id="Design Patterns" icon="/icon.jpg" anchor="right" factoryClass="nl.windesheim.codeparser.plugin.dialogs.MainDialog"/>
     </extensions>
 
     <application-components>

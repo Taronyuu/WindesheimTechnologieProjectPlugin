@@ -38,7 +38,8 @@ under the License.
     <rule ref="category/java/bestpractices.xml/ConstantsInInterface" />
     <rule ref="category/java/bestpractices.xml/DefaultLabelNotLastInSwitchStmt" />
     <rule ref="category/java/bestpractices.xml/ForLoopCanBeForeach" />
-    <rule ref="category/java/bestpractices.xml/GuardLogStatement" />
+    <!--And lets discuss this one too #zander-->
+    <!--<rule ref="category/java/bestpractices.xml/GuardLogStatement" />-->
     <rule ref="category/java/bestpractices.xml/JUnit4SuitesShouldUseSuiteAnnotation" />
     <rule ref="category/java/bestpractices.xml/JUnit4TestShouldUseAfterAnnotation" />
     <rule ref="category/java/bestpractices.xml/JUnit4TestShouldUseBeforeAnnotation" />
@@ -133,7 +134,8 @@ under the License.
     <rule ref="category/java/design.xml/ExcessivePublicCount" />
     <rule ref="category/java/design.xml/FinalFieldCouldBeStatic" />
     <rule ref="category/java/design.xml/GodClass" />
-    <rule ref="category/java/design.xml/ImmutableField" />
+    <!--Discussion about this one #zander-->
+    <!--<rule ref="category/java/design.xml/ImmutableField" />-->
     <rule ref="category/java/design.xml/LogicInversion" />
     <rule ref="category/java/design.xml/NPathComplexity" />
     <rule ref="category/java/design.xml/SignatureDeclareThrowsException" />

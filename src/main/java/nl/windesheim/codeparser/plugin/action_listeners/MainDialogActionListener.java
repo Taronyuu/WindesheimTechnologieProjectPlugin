@@ -5,7 +5,8 @@ import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 import nl.windesheim.reporting.components.TreeNode;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import java.awt.event.ActionEvent;
@@ -39,8 +40,9 @@ public class MainDialogActionListener implements ActionListener {
      */
     private JTree patternsList;
 
-    private DefaultTreeModel patternsListModel;
-
+    /**
+     * Logger from IntelliJ.
+     */
     private final Logger logger;
 
     /**
@@ -55,7 +57,6 @@ public class MainDialogActionListener implements ActionListener {
         this.codeParser = new CodeParser(ProjectManager.getInstance().getOpenProjects()[0]);
 
         this.patternsList = patternsList;
-        this.patternsListModel = (DefaultTreeModel)this.patternsList.getModel();
         this.patternsList.clearSelection();
         this.patternsList.removeAll();
 
@@ -89,25 +90,32 @@ public class MainDialogActionListener implements ActionListener {
         CodeReport codeReport = this.codeParser.findPatternsForCurrentProject();
 
         TreeNode root = codeReport.getTreePresentation().getRoot();
+
         this.logger.info("Root node: " + root);
+
         this.patternsList.clearSelection();
         this.patternsList.removeAll();
         DefaultMutableTreeNode defaultRootNode = new DefaultMutableTreeNode("Found Design Patterns");
         this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
-        if(root != null){
+        if (root != null) {
             this.fillTreeWithPatterns(codeReport.getTreePresentation().getRoot(), defaultRootNode);
+
             logger.info("New root node has amount of children: " + defaultRootNode.getChildCount());
+
             this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
         }
     }
 
     /**
-     * Put the logic to fill the JTree here.
-     * @param codeReport generated codereport
+     * Fill the current tree with all the patterns.
+     * @param treeNode the root node of the codereport.
+     * @param root the root node of the tree.
      */
-    protected void fillTreeWithPatterns(TreeNode node, DefaultMutableTreeNode root) {
+    protected void fillTreeWithPatterns(final TreeNode treeNode, final DefaultMutableTreeNode root) {
+        TreeNode node = treeNode;
+
         // Always keep on looping unless we break the cycle somewhere
-        while(true){
+        while (true) {
             logger.info("Found one the children: " + node);
 
             // Create a new category, this should be the name of the pattern. (e.g. Singleton or Observer)
@@ -117,11 +125,12 @@ public class MainDialogActionListener implements ActionListener {
             TreeNode siblings = node;
 
             // Only continue if there is another sibling
-            if(siblings.hasNextSibling()){
+            if (siblings.hasNextSibling()) {
                 // Keep on looping as long as there is another sibling.
-                while(siblings.hasNextSibling()){
+                while (siblings.hasNextSibling()) {
                     // Get the first next sibling and store it in  the variable
                     siblings = siblings.getNextSibling();
+
                     logger.info("Found one of the siblings: " + siblings);
 
                     // Add this node as a category under the design pattern. This should be a file name.
@@ -130,15 +139,15 @@ public class MainDialogActionListener implements ActionListener {
             }
 
             // Ignore empty categories
-            if(category.getChildCount() > 0){
+            if (category.getChildCount() > 0) {
                 root.add(category);
             }
 
             // If the following child is null, we should break
             // Otherwise continue with the loop and use the next first child.
-            if(node.getFirstChild() == null){
+            if (node.getFirstChild() == null) {
                 break;
-            }else {
+            } else {
                 node = node.getFirstChild();
             }
         }

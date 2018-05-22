@@ -1,4 +1,4 @@
-package nl.windesheim.codeparser.plugin.Dialogs;
+package nl.windesheim.codeparser.plugin.dialogs;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
@@ -8,7 +8,10 @@ import com.intellij.ui.content.ContentFactory;
 import nl.windesheim.codeparser.plugin.action_listeners.MainDialogActionListener;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JTree;
+import javax.swing.JLabel;
 
 /**
  * The MianDialog from where all the action happens.
