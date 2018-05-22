@@ -1,26 +1,22 @@
-package nl.windesheim.codeparser.plugin.Dialogs;
+package nl.windesheim.codeparser.plugin.dialogs;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import nl.windesheim.codeparser.plugin.ActionListeners.MainDialogActionListener;
+import nl.windesheim.codeparser.plugin.action_listeners.MainDialogActionListener;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
+import javax.swing.JTree;
 import javax.swing.JLabel;
 
 /**
  * The MianDialog from where all the action happens.
  */
 public class MainDialog implements ToolWindowFactory {
-    /**
-     * The toolwindow for this project.
-     */
-    private ToolWindow toolWindow;
 
     /**
      * The wrapper panel for all the other elements.
@@ -35,7 +31,7 @@ public class MainDialog implements ToolWindowFactory {
     /**
      * Tree list that should show all the found design patterns.
      */
-    private JTextArea patternsList;
+    private JTree patternsList;
 
     /**
      * Message to provide the user with a last updated at timestamp.
@@ -59,7 +55,6 @@ public class MainDialog implements ToolWindowFactory {
      */
     @Override
     public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-        this.toolWindow = toolWindow;
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(this.toolPanel, "", false);
         toolWindow.getContentManager().addContent(content);

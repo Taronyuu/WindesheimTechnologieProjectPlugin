@@ -5,17 +5,34 @@ plugins {
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 apply plugin: 'checkstyle'
+apply plugin: 'pmd'
+
+apply from: "gradle.properties"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 intellij {
     version '143.2370.31'
-    pluginName 'Codeparser IntelliJ'
+    pluginName 'Windesheim Codeparser IntelliJ'
+    updateSinceUntilBuild false
+    publish {
+        // (optional) apply from: "YOUR_CUSTOM_PROPERTIES_FILE.properties"
+    }
 }
 
 checkstyle {
     toolVersion "7.6.1"
+    configFile = file("${project.rootDir}/checkstyle.xml")
+    showViolations = true
+}
+
+pmd {
+    sourceSets = [sourceSets.main]
+    ruleSets = []
+    ruleSetFiles = rootProject.files("pmd-ruleset.xml")
+    toolVersion = "6.3.0"
+    consoleOutput = true
 }
 
 group 'nl.windesheim.codeparser.plugin'
@@ -28,5 +45,5 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'com.github.Taronyuu:WindesheimTechnologieProject:develop-SNAPSHOT'
+    compile 'com.github.Taronyuu:WindesheimTechnologieProject:8bb4d37a13d685db6a976dc337ffff961418b2dd'
 }
