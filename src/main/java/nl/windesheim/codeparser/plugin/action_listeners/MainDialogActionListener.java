@@ -158,21 +158,6 @@ public class MainDialogActionListener implements ActionListener {
     }
 
     /**
-     * Fill the tree category.
-     * @param treeNode the mutable tree node
-     * @param node the root treenode
-     * @return a filled mutable tree node
-     */
-    protected DefaultMutableTreeNode fill(DefaultMutableTreeNode treeNode, TreeNode node) {
-        if (node.hasNextSibling()){
-            return this.fill(new DefaultMutableTreeNode(node), node.getNextSibling());
-        }else {
-            treeNode.add(new DefaultMutableTreeNode(node));
-            return treeNode;
-        }
-    }
-
-    /**
      * Get a formatted date string that can be used to fill the last updated label text.
      * @return String
      */
