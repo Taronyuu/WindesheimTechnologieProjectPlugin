@@ -1,9 +1,8 @@
 package nl.windesheim.codeparser.plugin.services;
 
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import nl.windesheim.codeparser.FileAnalysisProvider;
 import nl.windesheim.codeparser.patterns.IDesignPattern;
@@ -12,9 +11,11 @@ import nl.windesheim.reporting.builders.CodeReportBuilder;
 import nl.windesheim.reporting.components.CodeReport;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -49,16 +50,24 @@ public class CodeParser {
      * Get the pattern for the currently openend file.
      * @return CodeReport
      */
-    public CodeReport findPatternForCurrentFile() {
+    public CodeReport findPatternsForCurrentProject() {
         // Get current openend file
-        String path = getCurrentFile();
+        try {
+            String stringPath = getCurrentDirectory() + "/";
+            logger.info("Using path: " + stringPath);
+            Path path = Paths.get(stringPath);
 
-        File file = new File(path);
-        FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
+            FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-        List<IDesignPattern> patterns = analyzeFiles(file, analysis);
+            List<IDesignPattern> patterns = analyzeFiles(path, analysis);
 
-        return generateCodeReport(patterns);
+            CodeReport codeReport = generateCodeReport(patterns);
+            logger.info("REPORTS: " + codeReport.getReport());
+
+            return codeReport;
+        } catch (IllegalStateException ex) {
+            return new CodeReport();
+        }
     }
 
     /**
@@ -77,18 +86,20 @@ public class CodeParser {
 
     /**
      * Analyze the current file.
-     * @param file current file.
+     * @param path current path.
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
-    private List<IDesignPattern> analyzeFiles(final File file, final FileAnalysisProvider analysis) {
+    private List<IDesignPattern> analyzeFiles(final Path path, final FileAnalysisProvider analysis) {
         List<IDesignPattern> patterns = new ArrayList<>();
 
         try {
-            patterns = analysis.analyzeFile(file.toURI().toURL());
+            patterns = analysis.analyzeDirectory(path);
         } catch (FileNotFoundException e) {
             logger.log(Level.SEVERE, "Ops!", e);
         } catch (MalformedURLException e) {
+            logger.log(Level.SEVERE, "Ops!", e);
+        } catch (IOException e) {
             logger.log(Level.SEVERE, "Ops!", e);
         }
 
@@ -100,9 +111,9 @@ public class CodeParser {
      * @return String
      */
     @NotNull
-    private String getCurrentFile() {
-        Document currentDoc = FileEditorManager.getInstance(project).getSelectedTextEditor().getDocument();
-        VirtualFile currentFile = FileDocumentManager.getInstance().getFile(currentDoc);
-        return currentFile.getPath();
+    private String getCurrentDirectory() {
+        VirtualFile file = ModuleRootManager.getInstance(ModuleManager.getInstance(project)
+                .getModules()[0]).getContentRoots()[0];
+        return file.getPath();
     }
 }

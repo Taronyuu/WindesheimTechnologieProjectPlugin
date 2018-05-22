@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JTextArea;
+import javax.swing.JTree;
 import javax.swing.JLabel;
 
 /**
@@ -31,7 +31,7 @@ public class MainDialog implements ToolWindowFactory {
     /**
      * Tree list that should show all the found design patterns.
      */
-    private JTextArea patternsList;
+    private JTree patternsList;
 
     /**
      * Message to provide the user with a last updated at timestamp.
