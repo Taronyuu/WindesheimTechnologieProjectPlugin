@@ -28,3 +28,4 @@ hs_err_pid*
 /.idea/dictionaries
 .DS_Store
 /build
+gradle.properties
