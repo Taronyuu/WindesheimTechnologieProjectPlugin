@@ -40,9 +40,10 @@ public class CodeParser {
 
     /**
      * Get the pattern for the currently openend file.
+     * @param project the project in which to find design patterns
      * @return CodeReport
      */
-    public CodeReport findPatternsForProject(Project project) {
+    public CodeReport findPatternsForProject(final Project project) {
         // Get current openend file
         try {
             String stringPath = getProjectSourceRoot(project) + "/";
@@ -100,10 +101,11 @@ public class CodeParser {
 
     /**
      * Get the current file path from the project.
+     * @param project the project for which to find the source root
      * @return String
      */
     @NotNull
-    private String getProjectSourceRoot(Project project) {
+    private String getProjectSourceRoot(final Project project) {
         //TODO this may not work with multiple source roots
         VirtualFile file = ProjectRootManager.getInstance(project).getContentSourceRoots()[0];
 

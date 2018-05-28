@@ -1,17 +1,11 @@
 package nl.windesheim.codeparser.plugin.dialogs;
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowFactory;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
 import nl.windesheim.codeparser.plugin.action_listeners.MainDialogActionListener;
-import org.jetbrains.annotations.NotNull;
 
-import javax.swing.JPanel;
 import javax.swing.JButton;
-import javax.swing.JTree;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTree;
 
 /**
  * The MianDialog from where all the action happens.
@@ -21,7 +15,7 @@ public class MainDialog {
     /**
      * The wrapper panel for all the other elements.
      */
-    public JPanel toolPanel;
+    private JPanel toolPanel;
 
     /**
      * Button to refresh all the found design patterns.
@@ -46,5 +40,12 @@ public class MainDialog {
         this.refreshButton.addActionListener(
                 new MainDialogActionListener(this.lastUpdateText, this.patternsList)
         );
+    }
+
+    /**
+     * @return the tool panel
+     */
+    public JPanel getToolPanel() {
+        return toolPanel;
     }
 }

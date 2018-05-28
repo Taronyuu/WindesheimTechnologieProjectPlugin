@@ -7,11 +7,14 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A factory for the main dialog.
+ */
 public class MainDialogFactory implements ToolWindowFactory {
     @Override
-    public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
+    public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(new MainDialog().toolPanel, "", false);
+        Content content = contentFactory.createContent(new MainDialog().getToolPanel(), "", false);
         toolWindow.getContentManager().addContent(content);
     }
 }

@@ -1,14 +1,9 @@
 package nl.windesheim.codeparser.plugin.action_listeners;
 
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.CommonDataKeys;
-import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectManager;
-import com.intellij.openapi.util.AsyncResult;
 import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 import nl.windesheim.reporting.components.TreeNode;
@@ -72,7 +67,10 @@ public class MainDialogActionListener implements ActionListener {
         this.updateFoundPatterns();
     }
 
-    private Project getCurrentProject(){
+    /**
+     * @return returns the project the current editor is focused on
+     */
+    private Project getCurrentProject() {
         //Get the current project depending on the focus
         DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
         return DataKeys.PROJECT.getData(dataContext);
