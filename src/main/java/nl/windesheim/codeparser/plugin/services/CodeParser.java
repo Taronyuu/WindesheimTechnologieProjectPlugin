@@ -1,8 +1,7 @@
 package nl.windesheim.codeparser.plugin.services;
 
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import nl.windesheim.codeparser.FileAnalysisProvider;
 import nl.windesheim.codeparser.patterns.IDesignPattern;
@@ -28,21 +27,14 @@ import java.util.logging.Logger;
 public class CodeParser {
 
     /**
-     * Current Project object, used to get the current open file.
-     */
-    private final Project project;
-
-    /**
      * The logger object for the current class.
      */
     private final Logger logger;
 
     /**
      * Wrapper for the CodeParser package.
-     * @param project the current project
      */
-    public CodeParser(final Project project) {
-        this.project = project;
+    public CodeParser() {
         this.logger = Logger.getLogger(this.getClass().getName());
     }
 
@@ -50,10 +42,10 @@ public class CodeParser {
      * Get the pattern for the currently openend file.
      * @return CodeReport
      */
-    public CodeReport findPatternsForCurrentProject() {
+    public CodeReport findPatternsForProject(Project project) {
         // Get current openend file
         try {
-            String stringPath = getCurrentDirectory() + "/";
+            String stringPath = getProjectSourceRoot(project) + "/";
             logger.info("Using path: " + stringPath);
             Path path = Paths.get(stringPath);
 
@@ -111,9 +103,10 @@ public class CodeParser {
      * @return String
      */
     @NotNull
-    private String getCurrentDirectory() {
-        VirtualFile file = ModuleRootManager.getInstance(ModuleManager.getInstance(project)
-                .getModules()[0]).getContentRoots()[0];
+    private String getProjectSourceRoot(Project project) {
+        //TODO this may not work with multiple source roots
+        VirtualFile file = ProjectRootManager.getInstance(project).getContentSourceRoots()[0];
+
         return file.getPath();
     }
 }

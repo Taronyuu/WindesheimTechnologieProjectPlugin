@@ -1,6 +1,14 @@
 package nl.windesheim.codeparser.plugin.action_listeners;
 
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.util.AsyncResult;
 import nl.windesheim.codeparser.plugin.services.CodeParser;
 import nl.windesheim.reporting.components.CodeReport;
 import nl.windesheim.reporting.components.TreeNode;
@@ -53,8 +61,7 @@ public class MainDialogActionListener implements ActionListener {
     public MainDialogActionListener(final JLabel lastUpdateText, final JTree patternsList) {
         this.logger = Logger.getLogger(this.getClass().getName());
 
-        // I'm not sure which project we should get, but for now lets take the first project.
-        this.codeParser = new CodeParser(ProjectManager.getInstance().getOpenProjects()[0]);
+        this.codeParser = new CodeParser();
 
         this.patternsList = patternsList;
         this.patternsList.clearSelection();
@@ -63,6 +70,12 @@ public class MainDialogActionListener implements ActionListener {
         this.lastUpdateLabel = lastUpdateText;
         this.updateLastUpdatedLabel();
         this.updateFoundPatterns();
+    }
+
+    private Project getCurrentProject(){
+        //Get the current project depending on the focus
+        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
+        return DataKeys.PROJECT.getData(dataContext);
     }
 
     /**
@@ -87,7 +100,7 @@ public class MainDialogActionListener implements ActionListener {
      * the patterns from the CodeParser wrapper.
      */
     protected void updateFoundPatterns() {
-        CodeReport codeReport = this.codeParser.findPatternsForCurrentProject();
+        CodeReport codeReport = this.codeParser.findPatternsForProject(getCurrentProject());
 
         TreeNode root = codeReport.getTreePresentation().getRoot();
 

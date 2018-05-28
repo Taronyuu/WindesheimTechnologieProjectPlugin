@@ -16,12 +16,12 @@ import javax.swing.JLabel;
 /**
  * The MianDialog from where all the action happens.
  */
-public class MainDialog implements ToolWindowFactory {
+public class MainDialog {
 
     /**
      * The wrapper panel for all the other elements.
      */
-    private JPanel toolPanel;
+    public JPanel toolPanel;
 
     /**
      * Button to refresh all the found design patterns.
@@ -46,17 +46,5 @@ public class MainDialog implements ToolWindowFactory {
         this.refreshButton.addActionListener(
                 new MainDialogActionListener(this.lastUpdateText, this.patternsList)
         );
-    }
-
-    /**
-     * Implemented by the interface.
-     * @param project current project.
-     * @param toolWindow given toolwindow.
-     */
-    @Override
-    public void createToolWindowContent(@NotNull final Project project, @NotNull final ToolWindow toolWindow) {
-        ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(this.toolPanel, "", false);
-        toolWindow.getContentManager().addContent(content);
     }
 }
