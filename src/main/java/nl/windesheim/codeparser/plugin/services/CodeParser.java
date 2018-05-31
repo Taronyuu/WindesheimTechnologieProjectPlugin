@@ -43,7 +43,12 @@ public class CodeParser {
      * @param project the project in which to find design patterns
      * @return CodeReport
      */
-    public CodeReport findPatternsForProject(final Project project) {
+    public List<IDesignPattern> findPatternsForProject(final Project project) {
+        if (project == null){
+            logger.log(Level.SEVERE, "No project in focus, can't get source root");
+            return new ArrayList<>();
+        }
+
         // Get current openend file
         try {
             String stringPath = getProjectSourceRoot(project) + "/";
@@ -52,14 +57,9 @@ public class CodeParser {
 
             FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-            List<IDesignPattern> patterns = analyzeFiles(path, analysis);
-
-            CodeReport codeReport = generateCodeReport(patterns);
-            logger.info("REPORTS: " + codeReport.getReport());
-
-            return codeReport;
+            return analyzeFiles(path, analysis);
         } catch (IllegalStateException ex) {
-            return new CodeReport();
+            return new ArrayList<>();
         }
     }
 
@@ -68,7 +68,7 @@ public class CodeParser {
      * @param patterns List of the paterns.
      * @return CodeReport
      */
-    private CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
+    public CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
         CodeReportBuilder codeReportBuilder = Report.create();
         for (IDesignPattern p : patterns) {
             codeReportBuilder.addFoundPatternBuilder(Report.getMapper().getBuilder(p));
