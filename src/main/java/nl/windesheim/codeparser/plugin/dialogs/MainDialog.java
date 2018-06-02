@@ -4,15 +4,10 @@ import com.github.javaparser.Range;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DataKeys;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.VirtualFileManager;
-import com.intellij.psi.impl.file.impl.FileManager;
 import nl.windesheim.codeparser.plugin.action_listeners.MainDialogActionListener;
 
 import javax.swing.JButton;
@@ -62,42 +57,44 @@ public class MainDialog {
         ToolTipManager.sharedInstance().registerComponent(this.patternsList);
         patternsList.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                int selRow = patternsList.getRowForLocation(e.getX(), e.getY());
-                TreePath selPath = patternsList.getPathForLocation(e.getX(), e.getY());
-                if(selRow != -1) {
-                    if(e.getClickCount() == 1) {
-                        //TODO: make single click event?
-                    }
-                    else if(e.getClickCount() == 2) {
-                        if(!(selPath.getLastPathComponent() instanceof PatternTreeNode)) {
-                            return;
-                        }
+            public void mouseClicked(final MouseEvent event) {
+                int selRow = getPatternsList().getRowForLocation(event.getX(), event.getY());
+                if (selRow == -1) {
+                    return;
+                }
 
-                        PatternTreeNode node = (PatternTreeNode) selPath.getLastPathComponent();
-                        if(node.getFilePart() == null) {
-                            return;
-                        }
+                if (event.getClickCount() != 2) {
+                    return;
+                }
 
-                        //Get the current project depending on the focus
-                        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
-                        if(dataContext == null) {
-                            return;
-                        }
+                TreePath selPath = getPatternsList().getPathForLocation(event.getX(), event.getY());
+                if (!(selPath.getLastPathComponent() instanceof PatternTreeNode)) {
+                    return;
+                }
 
-                        Project project = DataKeys.PROJECT.getData(dataContext);
+                PatternTreeNode node = (PatternTreeNode) selPath.getLastPathComponent();
+                if (node.getFilePart() == null) {
+                    return;
+                }
 
-                        if( project == null){
-                            return;
-                        }
+                //Get the current project depending on the focus
+                DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
+                if (dataContext == null) {
+                    return;
+                }
 
-                        VirtualFile vFile = LocalFileSystem.getInstance().findFileByIoFile(node.getFilePart().getFile());
+                Project project = DataKeys.PROJECT.getData(dataContext);
 
-                        if(vFile != null){
-                            Range range = node.getFilePart().getRange();
-                            new OpenFileDescriptor(project, vFile, range.begin.line, range.begin.column).navigate(true);
-                        }
-                    }
+                if (project == null) {
+                    return;
+                }
+
+                VirtualFile vFile = LocalFileSystem.getInstance()
+                        .findFileByIoFile(node.getFilePart().getFile());
+
+                if (vFile != null) {
+                    Range range = node.getFilePart().getRange();
+                    new OpenFileDescriptor(project, vFile, range.begin.line, range.begin.column).navigate(true);
                 }
             }
         });
@@ -108,5 +105,12 @@ public class MainDialog {
      */
     public JPanel getToolPanel() {
         return toolPanel;
+    }
+
+    /**
+     * @return the pattern list
+     */
+    public JTree getPatternsList() {
+        return patternsList;
     }
 }

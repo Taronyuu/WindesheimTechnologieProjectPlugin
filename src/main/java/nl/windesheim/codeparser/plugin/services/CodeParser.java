@@ -40,18 +40,25 @@ public class CodeParser {
 
     /**
      * Get the pattern for the currently openend file.
+     *
      * @param project the project in which to find design patterns
      * @return CodeReport
      */
     public List<IDesignPattern> findPatternsForProject(final Project project) {
-        if (project == null){
+        if (project == null) {
             logger.log(Level.SEVERE, "No project in focus, can't get source root");
             return new ArrayList<>();
         }
 
         // Get current openend file
         try {
-            String stringPath = getProjectSourceRoot(project) + "/";
+            String root = getProjectSourceRoot(project);
+
+            if (root == null) {
+                return new ArrayList<>();
+            }
+
+            String stringPath = root + "/";
             logger.info("Using path: " + stringPath);
             Path path = Paths.get(stringPath);
 
@@ -65,6 +72,7 @@ public class CodeParser {
 
     /**
      * Generate the code report for the given patterns.
+     *
      * @param patterns List of the paterns.
      * @return CodeReport
      */
@@ -79,7 +87,8 @@ public class CodeParser {
 
     /**
      * Analyze the current file.
-     * @param path current path.
+     *
+     * @param path     current path.
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
@@ -101,13 +110,20 @@ public class CodeParser {
 
     /**
      * Get the current file path from the project.
+     *
      * @param project the project for which to find the source root
      * @return String
      */
     @NotNull
     private String getProjectSourceRoot(final Project project) {
+        VirtualFile[] sourceRoots = ProjectRootManager.getInstance(project).getContentSourceRoots();
+
+        if (sourceRoots.length == 0) {
+            return null;
+        }
+
         //TODO this may not work with multiple source roots
-        VirtualFile file = ProjectRootManager.getInstance(project).getContentSourceRoots()[0];
+        VirtualFile file = sourceRoots[0];
 
         return file.getPath();
     }

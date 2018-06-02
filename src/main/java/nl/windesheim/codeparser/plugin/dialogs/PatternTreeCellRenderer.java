@@ -1,8 +1,5 @@
 package nl.windesheim.codeparser.plugin.dialogs;
 
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.IconLoader;
-
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.LookAndFeel;
@@ -10,18 +7,28 @@ import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Component;
 
+/**
+ * Cell renderer for the pattern tree nodes.
+ */
 public class PatternTreeCellRenderer extends DefaultTreeCellRenderer {
 
     @Override
-    public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf,
-                                                  int row, boolean hasFocus) {
+    public Component getTreeCellRendererComponent(
+            final JTree tree,
+            final Object value,
+            final boolean sel,
+            final boolean expanded,
+            final boolean leaf,
+            final int row,
+            final boolean hasFocus
+    ) {
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 
         Icon icon = null;
 
-        if(value instanceof PatternTreeNode){
+        if (value instanceof PatternTreeNode) {
             PatternTreeNode node = (PatternTreeNode) value;
-            if(node.getIcon() != null) {
+            if (node.getIcon() != null) {
                 icon = ((PatternTreeNode) value).getIcon();
             }
 
@@ -36,15 +43,17 @@ public class PatternTreeCellRenderer extends DefaultTreeCellRenderer {
             }
         }
 
-        if (!tree.isEnabled()) {
+        if (tree.isEnabled()) {
+            setEnabled(true);
+            setIcon(icon);
+        } else {
             setEnabled(false);
             LookAndFeel laf = UIManager.getLookAndFeel();
             Icon disabledIcon = laf.getDisabledIcon(tree, icon);
-            if (disabledIcon != null) icon = disabledIcon;
+            if (disabledIcon != null) {
+                icon = disabledIcon;
+            }
             setDisabledIcon(icon);
-        } else {
-            setEnabled(true);
-            setIcon(icon);
         }
 
         return this;
