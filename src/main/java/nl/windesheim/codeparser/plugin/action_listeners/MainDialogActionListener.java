@@ -1,8 +1,12 @@
 package nl.windesheim.codeparser.plugin.action_listeners;
 
-import com.intellij.openapi.project.ProjectManager;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.project.Project;
+import nl.windesheim.codeparser.patterns.IDesignPattern;
+import nl.windesheim.codeparser.plugin.dialogs.PatternTreeNode;
 import nl.windesheim.codeparser.plugin.services.CodeParser;
-import nl.windesheim.reporting.components.CodeReport;
 import nl.windesheim.reporting.components.TreeNode;
 
 import javax.swing.JLabel;
@@ -13,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -47,14 +52,14 @@ public class MainDialogActionListener implements ActionListener {
 
     /**
      * Get the required Swing object.
+     *
      * @param lastUpdateText Label to update when refreshing.
-     * @param patternsList Text area to update when refreshing.
+     * @param patternsList   Text area to update when refreshing.
      */
     public MainDialogActionListener(final JLabel lastUpdateText, final JTree patternsList) {
         this.logger = Logger.getLogger(this.getClass().getName());
 
-        // I'm not sure which project we should get, but for now lets take the first project.
-        this.codeParser = new CodeParser(ProjectManager.getInstance().getOpenProjects()[0]);
+        this.codeParser = new CodeParser();
 
         this.patternsList = patternsList;
         this.patternsList.clearSelection();
@@ -66,7 +71,21 @@ public class MainDialogActionListener implements ActionListener {
     }
 
     /**
+     * @return returns the project the current editor is focused on
+     */
+    private Project getCurrentProject() {
+        //Get the current project depending on the focus
+        DataContext dataContext = DataManager.getInstance().getDataContextFromFocus().getResult();
+        if (dataContext == null) {
+            return null;
+        }
+
+        return DataKeys.PROJECT.getData(dataContext);
+    }
+
+    /**
      * A click happens, refresh the label and found patterns.
+     *
      * @param event action event given by the button.
      */
     @Override
@@ -87,78 +106,45 @@ public class MainDialogActionListener implements ActionListener {
      * the patterns from the CodeParser wrapper.
      */
     protected void updateFoundPatterns() {
-        CodeReport codeReport = this.codeParser.findPatternsForCurrentProject();
-
-        TreeNode root = codeReport.getTreePresentation().getRoot();
-
-        this.logger.info("Root node: " + root);
-
+        List<IDesignPattern> patterns = this.codeParser.findPatternsForProject(getCurrentProject());
         this.patternsList.clearSelection();
         this.patternsList.removeAll();
         DefaultMutableTreeNode defaultRootNode = new DefaultMutableTreeNode("Found Design Patterns");
         this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
-        if (root != null) {
-            this.fillTreeWithPatterns(codeReport.getTreePresentation().getRoot(), defaultRootNode);
 
-            logger.info("New root node has amount of children: " + defaultRootNode.getChildCount());
+        fillTreeWithPatternsFromTree(codeParser.generateCodeReport(patterns).getTreePresentation().getRoot(),
+                defaultRootNode);
 
-            this.patternsList.setModel(new DefaultTreeModel(defaultRootNode));
-        }
+        logger.info("New root node has amount of children: " + defaultRootNode.getChildCount());
+
+        this.patternsList.setModel(new DefaultTreeModel(defaultRootNode.getFirstChild()));
+
     }
 
     /**
      * Fill the current tree with all the patterns.
+     *
      * @param treeNode the root node of the codereport.
-     * @param root the root node of the tree.
+     * @param root     the root node of the tree.
      */
-    protected void fillTreeWithPatterns(final TreeNode treeNode, final DefaultMutableTreeNode root) {
-        TreeNode node = treeNode;
+    protected void fillTreeWithPatternsFromTree(final TreeNode treeNode, final DefaultMutableTreeNode root) {
 
-        // Always keep on looping unless we break the cycle somewhere
-        while (true) {
-            logger.info("Found one the children: " + node);
+        PatternTreeNode currentNode = new PatternTreeNode(treeNode);
 
-            // Create a new category, this should be the name of the pattern. (e.g. Singleton or Observer)
-            DefaultMutableTreeNode category = new DefaultMutableTreeNode(node.toString());
+        root.add(currentNode);
 
-            // Temporarily store this node for the siblings
-            TreeNode siblings = node;
+        if (treeNode.hasChildren()) {
+            fillTreeWithPatternsFromTree(treeNode.getFirstChild(), currentNode);
+        }
 
-            // Only continue if there is another sibling
-            if (siblings.hasNextSibling()) {
-                // Keep on looping as long as there is another sibling.
-                while (siblings.hasNextSibling()) {
-                    // Get the first next sibling and store it in  the variable
-                    siblings = siblings.getNextSibling();
-
-                    logger.info("Found one of the siblings: " + siblings);
-
-                    // Add this node as a category under the design pattern. This should be a file name.
-                    category.add(new DefaultMutableTreeNode(siblings.toString()));
-
-                    if (siblings.hasChildren()) {
-                        this.fillTreeWithPatterns(siblings, category);
-                    }
-                }
-            }
-
-            // Ignore empty categories
-            if (category.getChildCount() > 0) {
-                root.add(category);
-            }
-
-            // If the following child is null, we should break
-            // Otherwise continue with the loop and use the next first child.
-            if (node.getFirstChild() == null) {
-                break;
-            } else {
-                node = node.getFirstChild();
-            }
+        if (treeNode.hasNextSibling()) {
+            fillTreeWithPatternsFromTree(treeNode.getNextSibling(), root);
         }
     }
 
     /**
      * Get a formatted date string that can be used to fill the last updated label text.
+     *
      * @return String
      */
     protected String getFormattedTimestamp() {

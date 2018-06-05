@@ -1,8 +1,7 @@
 package nl.windesheim.codeparser.plugin.services;
 
-import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootManager;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import nl.windesheim.codeparser.FileAnalysisProvider;
 import nl.windesheim.codeparser.patterns.IDesignPattern;
@@ -28,54 +27,56 @@ import java.util.logging.Logger;
 public class CodeParser {
 
     /**
-     * Current Project object, used to get the current open file.
-     */
-    private final Project project;
-
-    /**
      * The logger object for the current class.
      */
     private final Logger logger;
 
     /**
      * Wrapper for the CodeParser package.
-     * @param project the current project
      */
-    public CodeParser(final Project project) {
-        this.project = project;
+    public CodeParser() {
         this.logger = Logger.getLogger(this.getClass().getName());
     }
 
     /**
      * Get the pattern for the currently openend file.
+     *
+     * @param project the project in which to find design patterns
      * @return CodeReport
      */
-    public CodeReport findPatternsForCurrentProject() {
+    public List<IDesignPattern> findPatternsForProject(final Project project) {
+        if (project == null) {
+            logger.log(Level.SEVERE, "No project in focus, can't get source root");
+            return new ArrayList<>();
+        }
+
         // Get current openend file
         try {
-            String stringPath = getCurrentDirectory() + "/";
+            String root = getProjectSourceRoot(project);
+
+            if (root == null) {
+                return new ArrayList<>();
+            }
+
+            String stringPath = root + "/";
             logger.info("Using path: " + stringPath);
             Path path = Paths.get(stringPath);
 
             FileAnalysisProvider analysis = FileAnalysisProvider.getConfiguredFileAnalysisProvider();
 
-            List<IDesignPattern> patterns = analyzeFiles(path, analysis);
-
-            CodeReport codeReport = generateCodeReport(patterns);
-            logger.info("REPORTS: " + codeReport.getReport());
-
-            return codeReport;
+            return analyzeFiles(path, analysis);
         } catch (IllegalStateException ex) {
-            return new CodeReport();
+            return new ArrayList<>();
         }
     }
 
     /**
      * Generate the code report for the given patterns.
+     *
      * @param patterns List of the paterns.
      * @return CodeReport
      */
-    private CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
+    public CodeReport generateCodeReport(final List<IDesignPattern> patterns) {
         CodeReportBuilder codeReportBuilder = Report.create();
         for (IDesignPattern p : patterns) {
             codeReportBuilder.addFoundPatternBuilder(Report.getMapper().getBuilder(p));
@@ -86,7 +87,8 @@ public class CodeParser {
 
     /**
      * Analyze the current file.
-     * @param path current path.
+     *
+     * @param path     current path.
      * @param analysis The analysis provider to be used.
      * @return ArrayList<IDesignPattern>
      */
@@ -108,12 +110,21 @@ public class CodeParser {
 
     /**
      * Get the current file path from the project.
+     *
+     * @param project the project for which to find the source root
      * @return String
      */
     @NotNull
-    private String getCurrentDirectory() {
-        VirtualFile file = ModuleRootManager.getInstance(ModuleManager.getInstance(project)
-                .getModules()[0]).getContentRoots()[0];
+    private String getProjectSourceRoot(final Project project) {
+        VirtualFile[] sourceRoots = ProjectRootManager.getInstance(project).getContentSourceRoots();
+
+        if (sourceRoots.length == 0) {
+            return null;
+        }
+
+        //TODO this may not work with multiple source roots
+        VirtualFile file = sourceRoots[0];
+
         return file.getPath();
     }
 }
