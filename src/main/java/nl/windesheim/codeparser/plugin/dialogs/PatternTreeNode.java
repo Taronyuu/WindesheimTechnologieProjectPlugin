@@ -3,6 +3,7 @@ package nl.windesheim.codeparser.plugin.dialogs;
 import com.intellij.icons.AllIcons;
 import nl.windesheim.codeparser.FilePart;
 import nl.windesheim.reporting.components.NodeType;
+import nl.windesheim.reporting.components.Result;
 import nl.windesheim.reporting.components.TreeNode;
 
 import javax.swing.Icon;
@@ -30,6 +31,7 @@ public class PatternTreeNode extends DefaultMutableTreeNode {
 
     /**
      * Default constructor.
+     *
      * @param node the TreeNode which we represent with this node.
      */
     public PatternTreeNode(final TreeNode node) {
@@ -47,8 +49,19 @@ public class PatternTreeNode extends DefaultMutableTreeNode {
         nodeTypeIcons.put(NodeType.INTERFACE, AllIcons.Nodes.Interface);
         nodeTypeIcons.put(NodeType.CLASS_LIST, AllIcons.Hierarchy.Subtypes);
         nodeTypeIcons.put(NodeType.DESIGN_PATTERN, AllIcons.Nodes.Property);
+        nodeTypeIcons.put(NodeType.PATTERN_ERROR, AllIcons.General.Error);
 
         icon = nodeTypeIcons.getOrDefault(node.getNodeType(), AllIcons.FileTypes.Unknown);
+
+        if (node.getNodeType().equals(NodeType.DESIGN_PATTERN)) {
+            if (node.getResultCertainty().equals(Result.Certainty.LIKELY)) {
+                icon = AllIcons.Nodes.PropertyRead;
+            }
+
+            if (node.getResultCertainty().equals(Result.Certainty.UNLIKELY)) {
+                icon = AllIcons.Nodes.PropertyWrite;
+            }
+        }
     }
 
     /**
