@@ -46,6 +46,7 @@ public class PatternTreeNode extends DefaultMutableTreeNode {
         HashMap<NodeType, Icon> nodeTypeIcons = new HashMap<>();
         nodeTypeIcons.put(NodeType.ROOT, AllIcons.Nodes.Package);
         nodeTypeIcons.put(NodeType.CLASS, AllIcons.Nodes.Class);
+        nodeTypeIcons.put(NodeType.ABSTRACT_CLASS, AllIcons.Nodes.AbstractClass);
         nodeTypeIcons.put(NodeType.INTERFACE, AllIcons.Nodes.Interface);
         nodeTypeIcons.put(NodeType.CLASS_LIST, AllIcons.Hierarchy.Subtypes);
         nodeTypeIcons.put(NodeType.DESIGN_PATTERN, AllIcons.Nodes.Property);

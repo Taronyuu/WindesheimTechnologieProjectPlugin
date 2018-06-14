@@ -45,5 +45,5 @@ repositories {
 
 dependencies {
     testCompile 'junit:junit:4.12'
-    compile 'com.github.Taronyuu:WindesheimTechnologieProject:5e1ca92623af53430cae69647f5c907698fe7433'
+    compile 'com.github.Taronyuu:WindesheimTechnologieProject:96f5644e9ff99443d5302ea440a6f2d3573698b5'
 }
