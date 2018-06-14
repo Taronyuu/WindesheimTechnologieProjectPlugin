@@ -51,6 +51,7 @@ public class PatternTreeNode extends DefaultMutableTreeNode {
         nodeTypeIcons.put(NodeType.CLASS_LIST, AllIcons.Hierarchy.Subtypes);
         nodeTypeIcons.put(NodeType.DESIGN_PATTERN, AllIcons.Nodes.Property);
         nodeTypeIcons.put(NodeType.PATTERN_ERROR, AllIcons.General.Error);
+        nodeTypeIcons.put(NodeType.PATTERN_REMARK, AllIcons.General.Information);
 
         icon = nodeTypeIcons.getOrDefault(node.getNodeType(), AllIcons.FileTypes.Unknown);
 
